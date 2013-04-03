@@ -1,0 +1,44 @@
+﻿#FillForm textarea{
+	resize: none;
+	margin:auto;
+}
+#FillForm{
+	text-align:center;
+}
+#column{
+	width: 800px;
+	margin:auto;
+	padding-bottom:35px;
+}
+.thread{
+	background:#EEEEEE;
+	margin:10px;
+	padding:15px;
+}
+.answer{
+	background:#F0E0D6;
+	margin:10px 10px 30px 35px;
+	padding:15px;
+}
+.timestamp{
+	float: right;
+    font-size: 80%;
+}
+#title{
+	color:#800000;
+	font-size:30pt;
+	font-weight: bold;
+	width:100%;
+	text-align:center;
+}
+#subtitle{
+	color:#800000;
+	font-size:9pt;
+	font-weight: normal;
+	width:100%;
+	text-align:center;
+}
+body{
+	color:#272727;
+    line-height: 2;
+}
