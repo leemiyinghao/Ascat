@@ -8,7 +8,7 @@
 		$replacement = array();
 		$patterns[0] = "/--([^-]+)--/i";
 		$replacement[0] = '<del>$1</del>';
-		$patterns[1] = "/(https?\:\/.+\/[^\/]+\.(png|jpg|gif|bmp))/";
+		$patterns[1] = "/(https?\:\/.+\/[^\/]+\.(png|jpg|gif|bmp|jpeg))/";
 		$replacement[1] = "<a href=\&quot;$1\&quot; onclick=\&quot;TINY.box.show({image:'$1',boxid:'frameless',animate:true});return false;\&quot;><img src=\&quot;$1\&quot;/></a>";
 		$patterns[2] = "/\*\*([^*]+)\*\*/i";
 		$replacement[2] = '<b>$1</b>';
