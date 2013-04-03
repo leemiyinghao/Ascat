@@ -2,6 +2,26 @@
 	if($_POST['context'] and $_POST['context']!="" and mb_strlen($_POST['context'],'utf8') <=1000){
 		header( 'Location: index.html');
 	};
+	function string_encode($input){
+		$input = htmlspecialchars($input);
+		$patterns = array();
+		$replacement = array();
+		$patterns[0] = "/--([^-]+)--/i";
+		$replacement[0] = '<del>$1</del>';
+		$patterns[1] = "/(https?\:\/.+\/[^\/]+\.(png|jpg|gif|bmp))/";
+		$replacement[1] = "<a href=\&quot;$1\&quot; onclick=\&quot;TINY.box.show({image:'$1',boxid:'frameless',animate:true});return false;\&quot;><img src=\&quot;$1\&quot;/></a>";
+		$patterns[2] = "/\*\*([^*]+)\*\*/i";
+		$replacement[2] = '<b>$1</b>';
+		$patterns[3] = "/\*([^*]+)\*/i";
+		$replacement[3] = '<em>$1</em>';
+		$patterns[4] = "/__([^_]+)__/i";
+		$replacement[4] = '<u>$1</u>';
+		return preg_replace($patterns,$replacement,$input);
+	};
+	function string_decode($input){
+		$input = str_replace('\&quot;','"',$input);
+		return stripslashes($input);
+	}
 ?>
 <?php
 	if($_GET['reload'] == 1){
@@ -17,6 +37,7 @@
 <meta name=\"keywords\" content=\"catLee\" />
 <meta name=\"author\" content=\"catLee\" />
 <link rel=\"stylesheet\" href=\"style.css\" />
+<script type=\"text/javascript\" src=\"tinybox/tinybox.js\"></script>
 </head>
 <body>
 	<div id=\"title\">Ascat</div>
@@ -34,10 +55,10 @@
 			$index = $index."
 			<div class=\"thread\">
 				<div class=\"timestamp\">$inner[3]</div>
-				<div class=\"context\">$inner[2]</div>
+				<div class=\"context\">".string_decode($inner[2])."</div>
 			</div>
 			<div class=\"answer\">
-				<div class=\"context\">$inner[4]</div>
+				<div class=\"context\">".string_decode($inner[4])."</div>
 			</div>";
 		};
 		$index = $index."
@@ -92,10 +113,12 @@
 		$id = (count($out)+1);
 		$timestamp = date("H:i d,M Y",time());
 		$db = fopen("database.data", "w+");
-		fwrite($db,"(\"".$id."\",\"".preg_replace("/--([^-]+)--/i",'<del>$1</del>',htmlspecialchars($_POST['context']))."\",\"".$timestamp."\",\"尚未回應\")\n");
+		fwrite($db,"(\"".$id."\",\"".string_encode($_POST['context'])."\",\"".$timestamp."\",\"尚未回應\")\n");
 		fwrite($db,$database);
 		fclose($db);
 		#reload index.html
+		$database = file_get_contents('database.data');
+		preg_match_all('/\("([^"]+)","([^"]+)","([^"]+)","([^"]+)"\)/',$database,$out, PREG_SET_ORDER);
 		$index = "<!DOCTYPE HTML>
 <html lang=\"zh-TW\">
 <head>
@@ -105,6 +128,7 @@
 <meta name=\"keywords\" content=\"catLee\" />
 <meta name=\"author\" content=\"catLee\" />
 <link rel=\"stylesheet\" href=\"style.css\" />
+<script type=\"text/javascript\" src=\"tinybox/tinybox.js\"></script>
 </head>
 <body>
 	<div id=\"title\">Ascat</div>
@@ -118,22 +142,14 @@
 			</form>
 		</div>
 		<div id=\"maincon\"></br>目前共".($id)."筆問答</br>";
-		$index = $index."
-			<div class=\"thread\">
-				<div class=\"timestamp\">$timestamp</div>
-				<div class=\"context\">".stripslashes(preg_replace("/--([^-]+)--/i",'<del>$1</del>',htmlspecialchars("/--([^-]+)--/i",'<del>$1</del>',$_POST['context'])))."</div>
-			</div>
-			<div class=\"answer\">
-				<div class=\"context\">尚未回應</div>
-			</div>";
 		foreach($out as $inner){
 			$index = $index."
 			<div class=\"thread\">
 				<div class=\"timestamp\">$inner[3]</div>
-				<div class=\"context\">$inner[2]</div>
+				<div class=\"context\">".string_decode($inner[2])."</div>
 			</div>
 			<div class=\"answer\">
-				<div class=\"context\">$inner[4]</div>
+				<div class=\"context\">".string_decode($inner[4])."</div>
 			</div>";
 		};
 		$index = $index."
