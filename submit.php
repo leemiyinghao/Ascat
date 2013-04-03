@@ -29,7 +29,7 @@
 				<input id=\"button\" type=\"submit\" value=\"送出\">
 			</form>
 		</div>
-		<div id=\"maincon\"></br>目前共".($id+1)."筆問答</br>";
+		<div id=\"maincon\"></br>目前共".(count($out))."筆問答</br>";
 		foreach($out as $inner){
 			$index = $index."
 			<div class=\"thread\">
@@ -90,9 +90,9 @@
 		$database = file_get_contents('database.data');
 		preg_match_all('/\("([^"]+)","([^"]+)","([^"]+)","([^"]+)"\)/',$database,$out, PREG_SET_ORDER);
 		$id = (count($out)+1);
-		$timestamp = date("H:i d,M Y",time()+(8*60*60));
+		$timestamp = date("H:i d,M Y",time());
 		$db = fopen("database.data", "w+");
-		fwrite($db,"(\"".$id."\",\"".htmlspecialchars($_POST['context'])."\",\"".$timestamp."\",\"尚未回應\")\n");
+		fwrite($db,"(\"".$id."\",\"".preg_replace("/--([^-]+)--/i",'<del>$1</del>',htmlspecialchars($_POST['context']))."\",\"".$timestamp."\",\"尚未回應\")\n");
 		fwrite($db,$database);
 		fclose($db);
 		#reload index.html
@@ -117,11 +117,11 @@
 				<input id=\"button\" type=\"submit\" value=\"送出\">
 			</form>
 		</div>
-		<div id=\"maincon\"></br>目前共".($id+1)."筆問答</br>";
+		<div id=\"maincon\"></br>目前共".($id)."筆問答</br>";
 		$index = $index."
 			<div class=\"thread\">
 				<div class=\"timestamp\">$timestamp</div>
-				<div class=\"context\">".stripslashes(htmlspecialchars($_POST['context']))."</div>
+				<div class=\"context\">".stripslashes(preg_replace("/--([^-]+)--/i",'<del>$1</del>',htmlspecialchars("/--([^-]+)--/i",'<del>$1</del>',$_POST['context'])))."</div>
 			</div>
 			<div class=\"answer\">
 				<div class=\"context\">尚未回應</div>
